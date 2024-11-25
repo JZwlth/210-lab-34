@@ -38,18 +38,36 @@ public:
         }
     }
 
-    void DFSUtil(int v, set<int>& visited) {
-        visited.insert(v);
-        cout << v << " ";
-        for (auto& neighbor : adjList[v]) {
-            if (visited.find(neighbor.first) == visited.end()) {
-                DFSUtil(neighbor.first, visited);
-            }
-        }
-    }
+
 
     void DFS(int start) {
-        cout << "DFS starting from vertex"
+        cout << "DFS starting from vertex " << start << ":\n";
+        set<int> visited;
+        DFSUtil(start, visited);
+        cout << endl;
+    }
+
+    void BFS(int start) {
+        cout << "BFS starting from vertex " << start << ":\n";
+        set<int> visited;
+        queue<int> q;
+        visited.insert(start);
+        q.push(start);
+
+        while (!q.empty()) {
+            int v = q.front();
+            q.pop();
+            cout << v << " ";
+
+            for (auto& neighbor : adjList[v]) {
+                if (visited.find(neighbor.first) == visited.end()) {
+                    visited.insert(neighbor.first);
+                    q.push(neighbor.first);
+                }
+            }
+        }
+        cout << endl;
+    }
 
     void shortestPath(int start) {
         map<int, int> distances;
@@ -69,6 +87,41 @@ public:
                 int v = neighbor.first;
                 int weight = neighbor.second;
 
+                if (distances[u] + weight < distances[v]) {
+                    if (distances[v] != INT_MAX) {
+                        pq.erase(pq.find(make_pair(distances[v], v)));
+                    }
+                    distances[v] = distances[u] + weight;
+                    pq.insert(make_pair(distances[v], v));
+                }
+            }
+        }
+
+        cout << "Shortest path from node " << start << ":\n";
+        for (auto& dist : distances) {
+            cout << start << " -> " << dist.first << " : " << dist.second << endl;
+        }
+    }
+};
+
+int main() {
+    Graph g(9);
+
+    g.addEdge(0, 1, 8);
+    g.addEdge(0, 2, 21);
+    g.addEdge(1, 2, 6);
+    g.addEdge(1, 3, 5);
+    g.addEdge(1, 4, 4);
+    g.addEdge(2, 7, 11);
+    g.addEdge(2, 8, 8);
+    g.addEdge(3, 4, 9);
 
 
-    
+    g.sortAdjacency();
+    g.printGraph();
+    g.DFS(0);
+    g.BFS(0);
+    g.shortestPath(0);
+
+    return 0;
+}
