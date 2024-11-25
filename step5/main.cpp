@@ -1,3 +1,162 @@
+#include <iostream>
+#include <vector>
+#include <list>
+#include <queue>
+#include <map>
+#include <set>
+#include <climits>
+#include <algorithm>
+
+using namespace std;
+
+class Graph {
+    int V;
+    map<int, list<pair<int, int>>> adjList;
+
+public:
+    Graph(int V) { this->V = V; }
+
+    void addEdge(int u, int v, int weight) {
+        adjList[u].push_back(make_pair(v, weight));
+        adjList[v].push_back(make_pair(u, weight));
+    }
+
+    void sortAdjacency() {
+        for (auto& node : adjList) {
+            node.second.sort();
+        }
+    }
+
+    void printGraph() {
+        cout << "Graph's adjacency list:\n";
+        for (auto& node : adjList) {
+            cout << node.first << " --> ";
+            for (auto& neighbor : node.second) {
+                cout << "(" << neighbor.first << ", " << neighbor.second << ") ";
+            }
+            cout << endl;
+        }
+    }
+
+    void DFSUtil(int v, set<int>& visited) {
+        visited.insert(v);
+        cout << v << " ";
+        for (auto& neighbor : adjList[v]) {
+            if (visited.find(neighbor.first) == visited.end()) {
+                DFSUtil(neighbor.first, visited);
+            }
+        }
+    }
+
+    void DFS(int start) {
+        cout << "DFS starting from vertex " << start << ":\n";
+        set<int> visited;
+        DFSUtil(start, visited);
+        cout << endl;
+    }
+
+    void BFS(int start) {
+        cout << "BFS starting from vertex " << start << ":\n";
+        set<int> visited;
+        queue<int> q;
+        visited.insert(start);
+        q.push(start);
+
+        while (!q.empty()) {
+            int v = q.front();
+            q.pop();
+            cout << v << " ";
+
+            for (auto& neighbor : adjList[v]) {
+                if (visited.find(neighbor.first) == visited.end()) {
+                    visited.insert(neighbor.first);
+                    q.push(neighbor.first);
+                }
+            }
+        }
+        cout << endl;
+    }
+
+    void shortestPath(int start) {
+        map<int, int> distances;
+        for (auto& node : adjList) {
+            distances[node.first] = INT_MAX;
+        }
+        distances[start] = 0;
+
+        set<pair<int, int>> pq;
+        pq.insert(make_pair(0, start));
+
+        while (!pq.empty()) {
+            int u = pq.begin()->second;
+            pq.erase(pq.begin());
+
+            for (auto& neighbor : adjList[u]) {
+                int v = neighbor.first;
+                int weight = neighbor.second;
+
+                if (distances[u] + weight < distances[v]) {
+                    if (distances[v] != INT_MAX) {
+                        pq.erase(pq.find(make_pair(distances[v], v)));
+                    }
+                    distances[v] = distances[u] + weight;
+                    pq.insert(make_pair(distances[v], v));
+                }
+            }
+        }
+
+        cout << "Shortest path from node " << start << ":\n";
+        for (auto& dist : distances) {
+            cout << start << " -> " << dist.first << " : " << dist.second << endl;
+        }
+    }
+
+    void minimumSpanningTree() {
+        map<int, int> key;
+        map<int, int> parent;
+        set<int> inMST;
+
+        for (auto& node : adjList) {
+            key[node.first] = INT_MAX;
+        }
+
+        int start = adjList.begin()->first;
+        key[start] = 0;
+        parent[start] = -1;
+
+        set<pair<int, int>> pq;
+        pq.insert(make_pair(0, start));
+
+        while (!pq.empty()) {
+            int u = pq.begin()->second;
+            pq.erase(pq.begin());
+            inMST.insert(u);
+
+            for (auto& neighbor : adjList[u]) {
+                int v = neighbor.first;
+                int weight = neighbor.second;
+
+                if (inMST.find(v) == inMST.end() && key[v] > weight) {
+                    if (key[v] != INT_MAX) {
+                        pq.erase(pq.find(make_pair(key[v], v)));
+                    }
+                    key[v] = weight;
+                    pq.insert(make_pair(key[v], v));
+                    parent[v] = u;
+                }
+            }
+        }
+
+        cout << "Minimum Spanning Tree edges:\n";
+        for (auto& node : adjList) {
+            int v = node.first;
+            if (parent.find(v) != parent.end() && parent[v] != -1) {
+                cout << "Edge from " << parent[v] << " to " << v << " with weight: " << key[v] << endl;
+            }
+        }
+    }
+};
+
 int main() {
     Graph g(9);
 
