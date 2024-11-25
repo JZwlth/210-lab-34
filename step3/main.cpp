@@ -90,7 +90,18 @@ int main() {
     g.addEdge(2, 7, 11);  // E to A
     g.addEdge(2, 8, 8);   // E to S
     g.addEdge(3, 4, 9);   // M to P
-    g.addEdge(5, 6, 10);  // S to 
+    g.addEdge(5, 6, 10);  // S to W
+    g.addEdge(5, 7, 15);  // S to A
+    g.addEdge(5, 8, 5);   // S to S
+    g.addEdge(6, 7, 3);   // W to A
+    g.addEdge(6, 8, 7);   // W to S
+    g.addEdge(7, 2, 11);  // A to E
+    g.addEdge(7, 5, 15);  // A to S
+    g.addEdge(7, 6, 3);   // A to W
+    g.addEdge(8, 2, 8);   // S to E
+    g.addEdge(8, 5, 5);   // S to S
+    g.addEdge(8, 6, 7);   // S to W
+
 
     g.sortAdjacency();
     g.printGraph();
