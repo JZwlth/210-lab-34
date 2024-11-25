@@ -2,7 +2,6 @@
 #include <vector>
 #include <list>
 #include <queue>
-#include <stack>
 #include <map>
 #include <set>
 #include <algorithm>
@@ -10,7 +9,7 @@
 using namespace std;
 
 class Graph {
-    int V; // Number of vertices
+    int V;
     map<int, list<pair<int, int>>> adjList;
 
 public:
@@ -23,22 +22,19 @@ public:
         adjList[v].push_back(make_pair(u, weight));
     }
 
-    // Sort 
     void sortAdjacency() {
         for (auto& node : adjList) {
             node.second.sort();
         }
     }
 
-    // Print the adjacency list
     void printGraph() {
-        cout << "Graph's adjacency list:\n";
+        cout << "City Transportation Network:\n";
         for (auto& node : adjList) {
-            cout << node.first << " --> ";
+            cout << "Station " << node.first << " connects to:\n";
             for (auto& neighbor : node.second) {
-                cout << "(" << neighbor.first << ", " << neighbor.second << ") ";
+                cout << "  → Station " << neighbor.first << " (Travel Time: " << neighbor.second << " mins)\n";
             }
-            cout << endl;
         }
     }
 
@@ -53,14 +49,14 @@ public:
     }
 
     void DFS(int start) {
-        cout << "DFS starting from vertex " << start << ":\n";
+        cout << "\nTour Planning (DFS) starting from Station " << start << ":\n";
         set<int> visited;
         DFSUtil(start, visited);
         cout << endl;
     }
 
     void BFS(int start) {
-        cout << "BFS starting from vertex " << start << ":\n";
+        cout << "\nReachable Stations (BFS) from Station " << start << ":\n";
         set<int> visited;
         queue<int> q;
         visited.insert(start);
@@ -83,23 +79,25 @@ public:
 };
 
 int main() {
-    Graph g(7);
+    Graph g(9);
 
-    // Adding edges as per the sample graph
-    g.addEdge(0, 1, 12);
-    g.addEdge(0, 2, 8);
-    g.addEdge(0, 3, 21);
-    g.addEdge(2, 3, 6);
-    g.addEdge(2, 6, 2);
-    g.addEdge(2, 4, 4);
-    g.addEdge(2, 5, 5);
-    g.addEdge(4, 5, 9);
-    g.addEdge(5, 6, 6);
+    // Stations: 0 - Central Station, 1 - North Station, 2 - East Station, etc.
+    g.addEdge(0, 1, 8);   // C to N
+    g.addEdge(0, 2, 21);  // C to E
+    g.addEdge(1, 2, 6);   // N to E
+    g.addEdge(1, 3, 5);   // N to M
+    g.addEdge(1, 4, 4);   // N to P
+    g.addEdge(2, 7, 11);  // E to A
+    g.addEdge(2, 8, 8);   // E to S
+    g.addEdge(3, 4, 9);   // M to P
+    g.addEdge(5, 6, 10);  // S to 
 
     g.sortAdjacency();
     g.printGraph();
 
+    // Find DFS and BFS
     g.DFS(0);
+
     g.BFS(0);
 
     return 0;
